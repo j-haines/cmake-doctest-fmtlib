@@ -1,0 +1,28 @@
+version: 2.1
+
+executors:
+    ubuntu:
+        docker:
+        - image: ubuntu:latest
+
+jobs:
+    build:
+        executor: ubuntu
+        environment:
+            DEBIAN_FRONTEND: noninteractive
+        steps:
+        - run:
+            name: installing packages
+            command: |
+                apt update
+                apt install -yq cmake git gcc g++
+        - checkout
+        - run:
+            name: creating build files
+            command: cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Debug
+        - run:
+            name: building binaries
+            command: cmake --build build
+        - run:
+            name: running unit tests
+            command: ./build/tests/{%PROJECT_NAME%}_tests
